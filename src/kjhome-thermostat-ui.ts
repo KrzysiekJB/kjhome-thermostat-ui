@@ -199,7 +199,7 @@ export class BoilerplateCard extends LitElement {
             <p class="title">${this.config.name}</p>
             <div class="container">
                 <ha-control-circular-slider
-                    style="--control-circular-slider-color: ${ringColor};; width: 100%; max-width: 293px;"
+                    style="--control-circular-slider-color: ${ringColor};"
                     .value=${stateObj.attributes.temperature}
                     .min=${stateObj.attributes.min_temp}
                     .max=${stateObj.attributes.max_temp}
@@ -260,23 +260,16 @@ export class BoilerplateCard extends LitElement {
         return css`
         
             .container {
-                max-width: 336px;
-                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+                max-width: 100%;
                 box-sizing: border-box;
-                margin: 0 auto;
-                padding: 12px; /* dodatkowy padding */
-                --control-circular-slider-low-color: #993EED;
-        --control-circular-slider-high-color: #993EED;
+                flex: 1;
             }
-            .container.sm {
-                max-width: 336px;
-            }
-            .container.md {
-                max-width: 336px;
-            }
-            .container.lg {
-                max-width: 336px;
-            }
+            
             :host {
                 display: block;
                 overflow-x: hidden;
