@@ -4,15 +4,15 @@ import { customElement, property, state } from 'lit/decorators';
 import {
     HomeAssistant,
     hasConfigOrEntityChanged,
-    hasAction,
-    ActionHandlerEvent,
-    handleAction,
-    LovelaceCardEditor,
+    // hasAction,
+    // ActionHandlerEvent,
+    // handleAction,
+    // LovelaceCardEditor,
     getLovelace,
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 
 import type { BoilerplateCardConfig } from './types';
-import { actionHandler } from './action-handler-directive';
+// import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
@@ -203,6 +203,42 @@ export class BoilerplateCard extends LitElement {
         `;
     }
 
+    // Get ring size to change line size
+    private _updateLineStyle() {
+        const slider = this.renderRoot.querySelector('ha-control-circular-slider') as HTMLElement | null;
+        const line = this.renderRoot.querySelector('.temperature-line') as HTMLElement | null;
+
+        if (slider && line) {
+            const sliderWidth = slider.clientWidth;
+            if (sliderWidth > 0) { // upewniamy się, że rozmiar jest ustalony
+                const lineWidth = sliderWidth * 0.65;
+                // const lineTop = sliderWidth * 0.65;
+
+                line.style.width = `${lineWidth}px`;
+                // line.style.top = `${lineTop}px`;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Update line before update card
+    protected firstUpdated(): void{
+        // Próba natychmiastowego ustawienia linii
+        if (!this._updateLineStyle()) {
+            // jeśli slider ma jeszcze zerowy rozmiar, zrób późniejszą poprawkę po krótkim czasie
+            setTimeout(() => this._updateLineStyle(), 100);
+        }
+    }
+
+    // Update line evry change size
+    protected updated(changedProps: PropertyValues): void {
+        super.updated(changedProps);
+        if (changedProps.has('hass') || changedProps.has('config')) {
+            this._updateLineStyle();
+        }
+    }
+
 
     // https://lit.dev/docs/components/rendering/
     protected render(): TemplateResult | void {
@@ -216,7 +252,7 @@ export class BoilerplateCard extends LitElement {
         }
 
         const stateObj = this.hass.states[this.config.entity];
-        const humidityState = this.hass.states['sensor.living_room_humidity'];
+        // const humidityState = this.hass.states['sensor.living_room_humidity'];
         const ringColor = this.config.ring_color ?? 'var(--state-climate-heat-color, var(--state-active-color))';
         
         if (!stateObj) {
@@ -242,7 +278,9 @@ export class BoilerplateCard extends LitElement {
                     @value-changing=${this._handleValueChanging}
                     @value-changed=${this._handleValueChanged}
                 ></ha-control-circular-slider>
+                <div class="temperature-line"></div>
                 ${this._renderTarget()}
+                
             </div>
 
             
@@ -253,7 +291,7 @@ export class BoilerplateCard extends LitElement {
 
             <ha-icon-button
                 class="more-info"
-                .label=${this.hass!.localize("ui.panel.lovelace.cards.show_more_info")}
+                .label=${this.hass?.localize("ui.panel.lovelace.cards.show_more_info") ?? "Undefined"}
                 .path=${mdiDotsVertical}
                 @click=${this._handleMoreInfo}
                 tabindex="0"
@@ -297,6 +335,17 @@ export class BoilerplateCard extends LitElement {
     // https://lit.dev/docs/components/styles/
     static get styles(): CSSResultGroup {
         return css`
+
+            ha-card {
+                position: relative;
+                height: 100%;
+                width: 100%;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+            }
         
             .container {
                 display: flex;
@@ -371,6 +420,21 @@ export class BoilerplateCard extends LitElement {
                 pointer-events: none;
                 user-select: none;
                 color: var(--primary-text-color);
+            }
+
+            .temperature-line {
+                position: absolute;
+                top: 60%;             /* ustawia linię pionowo w 65% kontenera */
+                left: 50%;
+                transform: translateX(-50%);
+                height: 3px;
+                background-color: var(--primary-text-color);
+                opacity: 0.6;
+                border-radius: 1px;
+                pointer-events: none;
+                z-index: 10;
+                width: 100px;         /* tymczasowa stała szerokość dla testu */
+                max-width: 320px;     /* ograniczenie max szerokości */
             }
                 
         `;
