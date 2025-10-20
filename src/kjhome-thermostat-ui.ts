@@ -267,6 +267,7 @@ export class BoilerplateCard extends LitElement {
                 max-width: 100%;
                 box-sizing: border-box;
                 flex: 1;
+                padding: 10px;
             }
             
             :host {
