@@ -227,15 +227,15 @@ export class BoilerplateCard extends LitElement {
         `;
     }
 
-    private _handleAction(ev: ActionHandlerEvent): void {
-        if (this.hass && this.config && ev.detail.action) {
-        handleAction(this, this.hass, this.config, ev.detail.action);
-        }
-    }
+    // private _handleAction(ev: ActionHandlerEvent): void {
+    //     if (this.hass && this.config && ev.detail.action) {
+    //     handleAction(this, this.hass, this.config, ev.detail.action);
+    //     }
+    // }
 
-    private _showWarning(warning: string): TemplateResult {
-        return html` <hui-warning>${warning}</hui-warning> `;
-    }
+    // private _showWarning(warning: string): TemplateResult {
+    //     return html` <hui-warning>${warning}</hui-warning> `;
+    // }
 
     private _showError(error: string): TemplateResult {
         const errorCard = document.createElement('hui-error-card');
@@ -250,7 +250,11 @@ export class BoilerplateCard extends LitElement {
     private _handleMoreInfo() {
         if (!this.config) return;
         this.dispatchEvent(
-        new CustomEvent('hass-more-info', { detail: { entityId: this.config.entity } })
+            new CustomEvent('hass-more-info', {
+                detail: { entityId: this.config.entity },
+                bubbles: true,
+                composed: true,
+            })
         );
     }
 
