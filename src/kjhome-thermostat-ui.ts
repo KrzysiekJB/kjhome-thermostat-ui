@@ -170,6 +170,39 @@ export class BoilerplateCard extends LitElement {
         });
     }
     
+    private _renderTarget(): TemplateResult {
+        if (!this.hass || !this.config || !this.config.entity) {
+            return html``;
+        }
+        const stateObj = this.hass.states[this.config.entity];
+        if (!stateObj) return html``;
+
+        const temperature = this.tempSetpoint !== null ? this.tempSetpoint : stateObj.attributes.temperature;
+
+        if (temperature === undefined || temperature === null) {
+            return html``;
+        }
+
+        const digits = (stateObj.attributes.target_temp_step ?? 0.5).toString().split(".")?.[1]?.length ?? 0;
+        const formatOptions: Intl.NumberFormatOptions = {
+            maximumFractionDigits: digits,
+            minimumFractionDigits: digits,
+        };
+
+        const unit = this.hass.config.unit_system.temperature;
+
+        // Renderowanie z dużym stylem (big) jak w oryginalnej metodzie
+        return html`
+            <ha-big-number
+                class="target-temperature"
+                .value=${temperature}
+                .unit=${unit}
+                .hass=${this.hass}
+                .formatOptions=${formatOptions}
+            ></ha-big-number>
+        `;
+    }
+
 
     // https://lit.dev/docs/components/rendering/
     protected render(): TemplateResult | void {
@@ -209,7 +242,10 @@ export class BoilerplateCard extends LitElement {
                     @value-changing=${this._handleValueChanging}
                     @value-changed=${this._handleValueChanged}
                 ></ha-control-circular-slider>
+                ${this._renderTarget()}
             </div>
+
+            
 
             <div class="buttons-container">
                 ${this._renderTemperatureButtons("value", true)}
@@ -325,6 +361,16 @@ export class BoilerplateCard extends LitElement {
                 border-radius: var(--ha-border-radius-pill);
                 color: var(--secondary-text-color);
                 direction: var(--direction);
+            }
+
+            .target-temperature {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -70%);
+                pointer-events: none;
+                user-select: none;
+                color: var(--primary-text-color);
             }
                 
         `;
