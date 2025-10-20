@@ -290,6 +290,26 @@ export class BoilerplateCard extends LitElement {
                 white-space: nowrap;
                 flex: none;
             }
+
+            .buttons-container {
+                display: flex;
+                justify-content: center;
+                margin-top: -60px; /* mały odstęp od pierścienia */
+                pointer-events: auto; /* upewnia się, że przyciski odbierają kliknięcia */
+                z-index: 1; /* nad pierścieniem, żeby były interaktywne */
+            }
+
+            .buttons {
+                display: flex;
+                gap: 26px;
+                justify-content: center;
+            }
+
+            .buttons ha-outlined-icon-button {
+                width: 48px;
+                height: 48px;
+                --md-sys-icon-size: 28px;
+            }
                 
         `;
     }
