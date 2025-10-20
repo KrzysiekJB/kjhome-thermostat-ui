@@ -16,7 +16,7 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
-// import { mdiMinus, mdiPlus } from "@mdi/js";
+import { mdiMinus, mdiPlus } from "@mdi/js";
 
 
 /* eslint no-console: 0 */
@@ -102,73 +102,73 @@ export class BoilerplateCard extends LitElement {
         });
     }
 
-    // private _renderTemperatureButtons(target: "value" | "low" | "high", colored = false) {
+    private _renderTemperatureButtons(target: "value" | "low" | "high", colored = false) {
         
-    //     if (!this.hass || !this.config || !this.config.entity) {
-    //         return html`<hui-warning>${localize('common.show_warning')}</hui-warning>`;
-    //     }
+        if (!this.hass || !this.config || !this.config.entity) {
+            return html`<hui-warning>${localize('common.show_warning')}</hui-warning>`;
+        }
 
-    //     const stateObj = this.hass.states[this.config.entity];
-    //     if (!stateObj) return html``;
+        const stateObj = this.hass.states[this.config.entity];
+        if (!stateObj) return html``;
 
-    //     const lowColor = "var(--state-color-hergba(30, 26, 26, 1)#f00)"; // przykładowy kolor
-    //     const highColor = "var(--state-color-cool, #00f)";
+        const lowColor = "var(--state-color-hergba(30, 26, 26, 1)#f00)"; // przykładowy kolor
+        const highColor = "var(--state-color-cool, #00f)";
 
-    //     const color =
-    //         colored && stateObj.state !== "off"
-    //         ? target === "high"
-    //             ? highColor
-    //             : lowColor
-    //         : undefined;
+        const color =
+            colored && stateObj.state !== "off"
+            ? target === "high"
+                ? highColor
+                : lowColor
+            : undefined;
 
-    //     return html`
-    //         <div class="buttons">
-    //         <ha-outlined-icon-button
-    //             style="--md-sys-color-outline: ${color}"
-    //             @click=${() => this._handleButtonClick(target, -stateObj.attributes.target_temp_step)}
-    //             title="Decrease"
-    //         >
-    //             <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
-    //         </ha-outlined-icon-button>
-    //         <ha-outlined-icon-button
-    //             style="--md-sys-color-outline: ${color}"
-    //             @click=${() => this._handleButtonClick(target, stateObj.attributes.target_temp_step)}
-    //             title="Increase"
-    //         >
-    //             <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
-    //         </ha-outlined-icon-button>
-    //         </div>
-    //     `;
-    // }
+        return html`
+            <div class="buttons">
+            <ha-outlined-icon-button
+                style="--md-sys-color-outline: ${color}"
+                @click=${() => this._handleButtonClick(target, -stateObj.attributes.target_temp_step)}
+                title="Decrease"
+            >
+                <ha-svg-icon .path=${mdiMinus}></ha-svg-icon>
+            </ha-outlined-icon-button>
+            <ha-outlined-icon-button
+                style="--md-sys-color-outline: ${color}"
+                @click=${() => this._handleButtonClick(target, stateObj.attributes.target_temp_step)}
+                title="Increase"
+            >
+                <ha-svg-icon .path=${mdiPlus}></ha-svg-icon>
+            </ha-outlined-icon-button>
+            </div>
+        `;
+    }
 
-    // private _handleButtonClick(target: "value" | "low" | "high", step: number) {
+    private _handleButtonClick(target: "value" | "low" | "high", step: number) {
 
-    //     if (!this.hass || !this.config || !this.config.entity) {
-    //         return;
-    //     }
+        if (!this.hass || !this.config || !this.config.entity) {
+            return;
+        }
 
-    //     const stateObj = this.hass.states[this.config.entity];
-    //     if (!stateObj) return;
+        const stateObj = this.hass.states[this.config.entity];
+        if (!stateObj) return;
 
-    //     const currentValue = target === "value"
-    //         ? stateObj.attributes.temperature
-    //         : target === "low"
-    //         ? stateObj.attributes.target_temp_low
-    //         : stateObj.attributes.target_temp_high;
+        const currentValue = target === "value"
+            ? stateObj.attributes.temperature
+            : target === "low"
+            ? stateObj.attributes.target_temp_low
+            : stateObj.attributes.target_temp_high;
 
-    //     if (typeof currentValue !== "number") return;
+        if (typeof currentValue !== "number") return;
 
-    //     let newValue = currentValue + step;
-    //     const minTemp = stateObj.attributes.min_temp;
-    //     const maxTemp = stateObj.attributes.max_temp;
+        let newValue = currentValue + step;
+        const minTemp = stateObj.attributes.min_temp;
+        const maxTemp = stateObj.attributes.max_temp;
 
-    //     newValue = Math.min(Math.max(newValue, minTemp), maxTemp);
+        newValue = Math.min(Math.max(newValue, minTemp), maxTemp);
 
-    //     this.hass.callService("climate", "set_temperature", {
-    //         entity_id: this.config.entity,
-    //         temperature: newValue,
-    //     });
-    // }
+        this.hass.callService("climate", "set_temperature", {
+            entity_id: this.config.entity,
+            temperature: newValue,
+        });
+    }
     
 
     // https://lit.dev/docs/components/rendering/
@@ -194,12 +194,13 @@ export class BoilerplateCard extends LitElement {
         return html`
         <ha-card
             tabindex="0"
-            .label=${`Boilerplate: ${this.config.entity || 'No Entity Defined'}`}
+            .label=${`KJHome: ${this.config.entity || 'No Entity Defined'}`}
             >
-            <p class="title">${this.config.name}</p>
+            <p class="title">KJHome ${this.config.name}</p>
             <div class="container">
                 <ha-control-circular-slider
                     style="--control-circular-slider-color: ${ringColor};"
+                    .preventInteractionOnScroll=${true}
                     .value=${stateObj.attributes.temperature}
                     .min=${stateObj.attributes.min_temp}
                     .max=${stateObj.attributes.max_temp}
@@ -208,6 +209,10 @@ export class BoilerplateCard extends LitElement {
                     @value-changing=${this._handleValueChanging}
                     @value-changed=${this._handleValueChanged}
                 ></ha-control-circular-slider>
+            </div>
+
+            <div class="buttons-container">
+                ${this._renderTemperatureButtons("value", true)}
             </div>
 
             
@@ -221,10 +226,6 @@ export class BoilerplateCard extends LitElement {
             </ha-icon-button>
         </ha-card>
         
-        
-        
-        
-        </ha-card>
         `;
     }
 
