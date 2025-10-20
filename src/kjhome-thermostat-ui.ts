@@ -16,7 +16,7 @@ import type { BoilerplateCardConfig } from './types';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
-import { mdiMinus, mdiPlus, mdiDotsVertical, mdiThermometer } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiDotsVertical, mdiThermometer, mdiHeatingCoil } from "@mdi/js";
 
 
 /* eslint no-console: 0 */
@@ -214,10 +214,10 @@ export class BoilerplateCard extends LitElement {
 
         if (temperature != null) {
             return html`
-            <p class="label temperature">
+            <div>
                 <ha-svg-icon .path=${mdiThermometer}></ha-svg-icon>
                 <span>${temperature} °C</span>
-            </p>
+            </div>
             `;
         }
 
@@ -300,12 +300,12 @@ export class BoilerplateCard extends LitElement {
                     @value-changed=${this._handleValueChanged}
                 ></ha-control-circular-slider>
                 <div class="line-temp-wrapper">
-                <div class="temperature-line"></div>
-                <div class="temperatures-row">
-                    <div class="temperature-left">${this._renderTemperature()}</div>
-                    <div class="temperature-right">${this._renderTemperature()}</div>
+                    <div class="temperature-line"></div>
+                    <div class="temperatures-row">
+                        <div class="temperature-left">${this._renderTemperature()}</div>
+                        <div class="temperature-right">${this._renderTemperature()}</div>
+                    </div>
                 </div>
-            </div>
                 ${this._renderTarget()}
                 
                 
@@ -451,48 +451,56 @@ export class BoilerplateCard extends LitElement {
             }
 
             .line-temp-wrapper {
-    position: absolute;
-    top: 53%;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    max-width: 220px;
-    width: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
+                position: absolute;
+                top: 60%;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                max-width: 200px;
+                width: 100%;
+                pointer-events: none;
+                z-index: 10;
+            }
 
-.temperature-line {
-    width: 100%;              /* zajmuje całą szerokość wrappera */
-    height: 3px;
-    background-color: var(--primary-text-color);
-    opacity: 0.6;
-    border-radius: 1px;
-    pointer-events: none;
-}
+            .temperature-line {
+                width: 100%;              /* zajmuje całą szerokość wrappera */
+                height: 3px;
+                background-color: var(--primary-text-color);
+                opacity: 0.8;
+                border-radius: 1px;
+                pointer-events: none;
+            }
 
-.temperatures-row {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    pointer-events: auto;
-    transform: translateX(-5px);  /* przesuwa tylko temperatury w lewo */
-}
+            .temperatures-row {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                pointer-events: auto;
+                transform: translateX(-5px);  /* przesuwa tylko temperatury w lewo */
+            }
 
-.temperature-left,
-.temperature-right {
-    font-size: 1.5em;
-    min-width: 40px;
-    white-space: nowrap;
-    color: var(--primary-text-color);
-    font-weight: var(--ha-font-weight-medium);
-    user-select: none;
-    text-align: center;
-}
+            .temperature-left,
+            .temperature-right {
+                font-size: 1.4em;
+                min-width: 40px;
+                white-space: nowrap;
+                color: var(--primary-text-color);
+                font-weight: var(--ha-font-weight-medium);
+                user-select: none;
+                text-align: center;
+            }
 
+            .temperature-left ha-svg-icon,
+            .temperature-right ha-svg-icon {
+                width: 1em;   /* rozmiar względny do czcionki, np 1em lub 20px */
+                height: 1em;  /* zachowuje proporcje */
+                font-size: 0.9em; /* opcjonalnie, dla jeszcze mniejszej ikony */
+                margin-bottom: 2px;  /* odstęp od liczby */
+                vertical-align: middle;
+            }
 
                 
         `;
