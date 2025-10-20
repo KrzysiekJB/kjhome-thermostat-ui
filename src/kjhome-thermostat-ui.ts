@@ -16,7 +16,7 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
-import { mdiMinus, mdiPlus } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiDotsVertical } from "@mdi/js";
 
 
 /* eslint no-console: 0 */
@@ -215,15 +215,13 @@ export class BoilerplateCard extends LitElement {
                 ${this._renderTemperatureButtons("value", true)}
             </div>
 
-            
             <ha-icon-button
                 class="more-info"
-                .label=${this.hass.localize('ui.panel.lovelace.cards.show_more_info')}
-                .path="M16 12a4 4 0 1 0 -8 0 4 4 0 0 0 8 0z"
+                .label=${this.hass!.localize("ui.panel.lovelace.cards.show_more_info")}
+                .path=${mdiDotsVertical}
                 @click=${this._handleMoreInfo}
                 tabindex="0"
-                >
-            </ha-icon-button>
+            ></ha-icon-button>
         </ha-card>
         
         `;
@@ -297,6 +295,7 @@ export class BoilerplateCard extends LitElement {
                 margin-top: -60px; /* mały odstęp od pierścienia */
                 pointer-events: auto; /* upewnia się, że przyciski odbierają kliknięcia */
                 z-index: 1; /* nad pierścieniem, żeby były interaktywne */
+                margin-bottom: 20px;
             }
 
             .buttons {
@@ -309,6 +308,18 @@ export class BoilerplateCard extends LitElement {
                 width: 48px;
                 height: 48px;
                 --md-sys-icon-size: 28px;
+            }
+
+            .more-info {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                right: 0;
+                inset-inline-end: 0px;
+                inset-inline-start: initial;
+                border-radius: var(--ha-border-radius-pill);
+                color: var(--secondary-text-color);
+                direction: var(--direction);
             }
                 
         `;
