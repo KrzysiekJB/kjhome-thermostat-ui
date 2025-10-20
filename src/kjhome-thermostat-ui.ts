@@ -16,7 +16,7 @@ import type { BoilerplateCardConfig } from './types';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
-import { mdiMinus, mdiPlus, mdiDotsVertical } from "@mdi/js";
+import { mdiMinus, mdiPlus, mdiDotsVertical, mdiThermometer } from "@mdi/js";
 
 
 /* eslint no-console: 0 */
@@ -203,6 +203,27 @@ export class BoilerplateCard extends LitElement {
         `;
     }
 
+    private _renderTemperature() {
+        if (!this.hass || !this.config || !this.config.entity) {
+            return html``;
+        }
+        const stateObj = this.hass.states[this.config.entity];
+        if (!stateObj) return html``;
+
+        const temperature = stateObj.attributes.temperature;
+
+        if (temperature != null) {
+            return html`
+            <p class="label temperature">
+                <ha-svg-icon .path=${mdiThermometer}></ha-svg-icon>
+                <span>${temperature} °C</span>
+            </p>
+            `;
+        }
+
+        return html`<p class="label temperature"></p>`;
+    }
+
     // Get ring size to change line size
     private _updateLineStyle() {
         const slider = this.renderRoot.querySelector('ha-control-circular-slider') as HTMLElement | null;
@@ -278,8 +299,15 @@ export class BoilerplateCard extends LitElement {
                     @value-changing=${this._handleValueChanging}
                     @value-changed=${this._handleValueChanged}
                 ></ha-control-circular-slider>
+                <div class="line-temp-wrapper">
                 <div class="temperature-line"></div>
+                <div class="temperatures-row">
+                    <div class="temperature-left">${this._renderTemperature()}</div>
+                    <div class="temperature-right">${this._renderTemperature()}</div>
+                </div>
+            </div>
                 ${this._renderTarget()}
+                
                 
             </div>
 
@@ -422,20 +450,50 @@ export class BoilerplateCard extends LitElement {
                 color: var(--primary-text-color);
             }
 
-            .temperature-line {
-                position: absolute;
-                top: 60%;             /* ustawia linię pionowo w 65% kontenera */
-                left: 50%;
-                transform: translateX(-50%);
-                height: 3px;
-                background-color: var(--primary-text-color);
-                opacity: 0.6;
-                border-radius: 1px;
-                pointer-events: none;
-                z-index: 10;
-                width: 100px;         /* tymczasowa stała szerokość dla testu */
-                max-width: 320px;     /* ograniczenie max szerokości */
-            }
+            .line-temp-wrapper {
+    position: absolute;
+    top: 53%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    max-width: 220px;
+    width: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.temperature-line {
+    width: 100%;              /* zajmuje całą szerokość wrappera */
+    height: 3px;
+    background-color: var(--primary-text-color);
+    opacity: 0.6;
+    border-radius: 1px;
+    pointer-events: none;
+}
+
+.temperatures-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: auto;
+    transform: translateX(-5px);  /* przesuwa tylko temperatury w lewo */
+}
+
+.temperature-left,
+.temperature-right {
+    font-size: 1.5em;
+    min-width: 40px;
+    white-space: nowrap;
+    color: var(--primary-text-color);
+    font-weight: var(--ha-font-weight-medium);
+    user-select: none;
+    text-align: center;
+}
+
+
                 
         `;
     }
